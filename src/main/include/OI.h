@@ -21,7 +21,7 @@ private:
 
 std::shared_ptr<frc::Joystick> operatorJoystick;
 std::shared_ptr<frc::JoystickButton> wheelControl;
-std::shared_ptr<frc::JoystickButton> shooter;
+std::shared_ptr<frc::JoystickButton> shoot;
 std::shared_ptr<frc::JoystickButton> intakeIn;
 std::shared_ptr<frc::Joystick> driverJoystick;
 std::shared_ptr<frc::JoystickButton> climb;

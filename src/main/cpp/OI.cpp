@@ -25,8 +25,8 @@ operatorJoystick.reset(new frc::Joystick(1));
 
 wheelControl.reset(new frc::JoystickButton(operatorJoystick.get(), 1));
 wheelControl->WhileHeld(new Blank());
-shooter.reset(new frc::JoystickButton(operatorJoystick.get(), 1));
-shooter->WhileHeld(new Blank());
+shoot.reset(new frc::JoystickButton(operatorJoystick.get(), 1));
+shoot->WhileHeld(new Blank());
 intakeIn.reset(new frc::JoystickButton(operatorJoystick.get(), 1));
 intakeIn->WhileHeld(new Blank());
 driverJoystick.reset(new frc::Joystick(0));

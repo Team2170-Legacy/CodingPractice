@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "frc/WPILib.h"
 #include "frc/TimedRobot.h"
 #include "frc/commands/Command.h"
 #include "frc/livewindow/LiveWindow.h"

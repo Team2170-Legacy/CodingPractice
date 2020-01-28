@@ -32,7 +32,7 @@ driveMode((DriveMode) frc::Preferences::GetInstance()->GetInt("Drive Mode", arca
  * @brief Called just before this Command runs the first time
  */
 void TeleopDrive::Initialize() {
-
+    TeleopDrive::Execute();
 }
 
 /**
@@ -54,7 +54,7 @@ void TeleopDrive::Execute()
     {
 
     case DriveMode::arcadeDriveVelocity:
-        Robot::driveTrain->ArcadeDrive(-xAxis, yAxis);
+        Robot::driveTrain->VelocityArcade(-xAxis, yAxis);
         break;
     case DriveMode::tankDriveVelocity:
         // Robot::driveTrain->VelocityTankDrive(-yAxis, -Robot::oi->getDriverJoystickRight()->GetRawAxis(1));
@@ -63,7 +63,7 @@ void TeleopDrive::Execute()
         // Robot::driveTrain->TankDrive(-yAxis, -Robot::oi->getDriverJoystickRight()->GetRawAxis(4s));
         break;
     case DriveMode::arcadeDriveVoltage:
-        // Robot::driveTrain->ArcadeDrive(yAxis, xAxis);
+        Robot::driveTrain->ArcadeDrive(xAxis, yAxis);
         break;
     default:
         break;

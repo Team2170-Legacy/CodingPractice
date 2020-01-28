@@ -54,7 +54,7 @@ void TeleopDrive::Execute()
     {
 
     case DriveMode::arcadeDriveVelocity:
-        Robot::driveTrain->VelocityArcade(-yAxis, -xAxis);
+        Robot::driveTrain->ArcadeDrive(-xAxis, yAxis);
         break;
     case DriveMode::tankDriveVelocity:
         // Robot::driveTrain->VelocityTankDrive(-yAxis, -Robot::oi->getDriverJoystickRight()->GetRawAxis(1));

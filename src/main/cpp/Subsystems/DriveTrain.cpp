@@ -107,6 +107,10 @@ void DriveTrain::Periodic() {
 // Put methods for controlling this subsystem
 // here. Call these from Commands.
 
+void DriveTrain::ArcadeDrive(double xSpeed, double zRotation){
+    differentialDrive->ArcadeDrive(-xSpeed, zRotation);
+}
+
 /**
  * @brief Arcade Drive using closed-loop PIDF velocity control with CAN Spark Maxes
  * 

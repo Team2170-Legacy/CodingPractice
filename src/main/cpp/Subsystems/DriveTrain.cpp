@@ -108,7 +108,7 @@ void DriveTrain::Periodic() {
 // here. Call these from Commands.
 
 void DriveTrain::ArcadeDrive(double xSpeed, double zRotation){
-    differentialDrive->ArcadeDrive(-xSpeed, zRotation);
+    differentialDrive->ArcadeDrive(xSpeed, zRotation);
 }
 
 /**

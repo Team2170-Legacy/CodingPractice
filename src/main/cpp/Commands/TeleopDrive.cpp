@@ -79,9 +79,6 @@ void TeleopDrive::Execute()
             speedVoltage = 0.0;
         }
 
-        std::cout << speedVoltage << std::endl;
-        std::cout << xAxis << std::endl;
-
         //Robot::driveTrain->ArcadeDrive(speedVoltage, -xAxis);
         Robot::driveTrain->VelocityArcade(-yAxis, -speedVoltage);
         break;

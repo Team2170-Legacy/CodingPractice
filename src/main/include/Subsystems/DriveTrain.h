@@ -40,10 +40,7 @@ private:
 	std::shared_ptr<rev::CANSparkMax> sparkMaxRightLead;
 	std::shared_ptr<rev::CANSparkMax> sparkMaxRightFollow;
 	std::shared_ptr<frc::ADXRS450_Gyro> analogGyro;
-	std::shared_ptr<rev::CANPIDController> pidControllerL;
-	std::shared_ptr<rev::CANPIDController> pidControllerR;
-	std::shared_ptr<rev::CANEncoder> encoderControllerL;
-	std::shared_ptr<rev::CANEncoder> encoderControllerR;
+
 	std::shared_ptr<frc::Relay> spikeLED;
 
 	const double kGearRatio = 5.95;
@@ -59,12 +56,13 @@ private:
 	const double maxFeetPerSec;
 	const double maxAccelPerSec;
 
-	// Gains for closed-loop velocity control FOR VISION 
-	double kP_Vision = 2;
-	double kP_Omega = 0.075;
-	double omega_Max = 2*M_PI;
-	double kP_Align_Master;
+	
 public:
+    std::shared_ptr<rev::CANPIDController> pidControllerL;
+	std::shared_ptr<rev::CANPIDController> pidControllerR;
+	std::shared_ptr<rev::CANEncoder> encoderControllerL;
+	std::shared_ptr<rev::CANEncoder> encoderControllerR;
+
 DriveTrain();
 	void InitDefaultCommand() override;
 	void Periodic() override;

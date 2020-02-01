@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "Robot.h"
 #include "frc/commands/Subsystem.h"
 #include "networktables/NetworkTable.h"
 #include "networktables/NetworkTableEntry.h"
@@ -45,21 +44,19 @@ private:
 	nt::NetworkTableEntry camMode;
 	nt::NetworkTableEntry setPipe;
 	nt::NetworkTableEntry snapshot;
+	
 
 	const double  powerportVisionTargetHeight= (6 + 9.25/12) + (1 + 5.0/12)/2; // height of the center of the vision target (ft)
 	const double cameraHeight = 21.0/12; // height that the camera is mounted at (ft)
 	const double cameraAngle = 35; // angle camera is mounted at from horizontal (degrees)
 	const double cameraDistanceFromFrontBumper = 15.0/12; 
 
-	// Gains for closed-loop velocity control FOR VISION 
-	double min_command = 0;
-	double kP_Omega = -0.1;
-
 
 public:
     enum Pipeline {powerport = 0};
 	enum LEDMode {currentPipelineMode = 0, forceOff = 1, forceBlink = 2, forceOn = 3};
 	nt::NetworkTableEntry automove;
+	nt::NetworkTableEntry distance;
 
 	Vision();
 	void InitDefaultCommand() override;
@@ -75,7 +72,6 @@ public:
 	void setLEDMode(LEDMode ledModeToSet);
 	void setCamMode(bool visionProcessingEnabled);
 	void setPipeline(Pipeline pipeline);
-	void VisionSteerController(double x_angle_error, double distanceFromTarget);
 
 };
 

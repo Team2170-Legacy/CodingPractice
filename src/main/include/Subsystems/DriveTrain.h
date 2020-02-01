@@ -56,6 +56,10 @@ private:
 	const double maxFeetPerSec;
 	const double maxAccelPerSec;
 
+	// Gains for closed-loop velocity control FOR VISION 
+	double min_command = 0;
+	double kP_Omega = -0.05;
+
 	
 public:
     std::shared_ptr<rev::CANPIDController> pidControllerL;
@@ -80,7 +84,7 @@ DriveTrain();
 	double GetVelocity();
 	void SetLEDOn(bool LEDOn);
 	void ZeroPosition();
-	void VisionSteerController(double angle, double error, double distance);		// returns [v, omega]
+	void VisionSteerController(double angleError, double distance);		// returns [v, omega]
 
 	// Gyro methods
 	void ResetGyro()  { analogGyro->Reset();}

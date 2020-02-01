@@ -34,7 +34,7 @@ OI::OI() {
     intakeIn.reset(new frc::JoystickButton(operatorJoystick.get(), 6));
     intakeIn->WhileHeld(new IntakePullIn());
     driverJoystick.reset(new frc::XboxController(0));
-    vision.reset(new frc::JoystickButton(operatorJoystick.get(), 3));
+    vision.reset(new frc::JoystickButton(driverJoystick.get(), 3));
     vision->WhileHeld(new VisionDrive());
 
     climb.reset(new frc::JoystickButton(driverJoystick.get(), 5));

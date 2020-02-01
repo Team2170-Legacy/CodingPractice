@@ -29,6 +29,8 @@ Vision::Vision() : frc::Subsystem("Vision") {
 	camMode = table->GetEntry("camMode");
 	setPipe = table->GetEntry("pipeline");
 	snapshot = table->GetEntry("snapshot");
+    distance = table->GetEntry("distance");
+    distance.SetDouble(0);
     automove = table->GetEntry("automove");
     automove.SetBoolean(false);
 }
@@ -127,23 +129,3 @@ void Vision::setPipeline(Pipeline pipeline) {
     setPipe.SetDouble((double)pipelineIndex);
 }
 
-void Vision::VisionSteerController(double angleError, double distance) {
-   
-	kP_Omega        = frc::Preferences::GetInstance()->GetDouble("Vision kP Omega", kP_Omega);
-   min_command       = frc::Preferences::GetInstance()->GetDouble("Vision Min Command", min_command);
-
-    double heading_error = angleError;
-    double steering_adjust = 0.0;
-    if (angleError > 1.0)
-    {
-        steering_adjust = kP_Omega * heading_error - min_command;
-    }
-    else if (angleError < 1.0)
-    {
-        steering_adjust = kP_Omega * heading_error + min_command;
-    }
-
-    // Send vL and vR to CAN Spark Maxes
-    Robot::driveTrain->pidControllerL->SetReference(steering_adjust, rev::ControlType::kVelocity);  
-    Robot::driveTrain->pidControllerR->SetReference(-steering_adjust, rev::ControlType::kVelocity);  
-}

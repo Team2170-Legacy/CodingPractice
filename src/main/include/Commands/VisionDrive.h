@@ -12,7 +12,7 @@
 #ifndef VISIONDRIVE_H
 #define VISIONDRIVE_H
 
-
+#include "frc/WPILib.h"
 #include "frc/commands/Subsystem.h"
 #include "Robot.h"
 #include "networktables/NetworkTable.h"

@@ -32,6 +32,13 @@ Vision::Vision() : frc::Subsystem("Vision") {
     distance.SetDouble(0);
     automove = table->GetEntry("automove");
     automove.SetBoolean(false);
+
+    mAA = table->GetEntry("Vision Min Align Adjust");
+    kP_O = table->GetEntry("Vision kP Omega");
+    kP_D = table->GetEntry("Vision kP Distance");
+    mAA.SetDouble(min_AlignAdjust);
+    kP_O.SetDouble(kP_Omega);
+    kP_D.SetDouble(kP_Distance);
 }
 
 void Vision::InitDefaultCommand() {
@@ -143,10 +150,14 @@ void Vision::SetPipeline(Pipeline pipeline) {
  */
 void Vision::VisionSteerController(double angleError, double distanceError, std::shared_ptr<rev::CANPIDController> pidControllerL, std::shared_ptr<rev::CANPIDController> pidControllerR) {
    
+   /*
 	kP_Omega  = frc::Preferences::GetInstance()->GetDouble("Vision kP Omega", kP_Omega);
     min_AlignAdjust = frc::Preferences::GetInstance()->GetDouble("Vision Min Align Adjust", min_AlignAdjust);
     kP_Distance = frc::Preferences::GetInstance()->GetDouble("Vision kP Distance", kP_Distance);
- 
+ */
+    kP_Omega = kP_O.GetDouble(kP_Omega);
+    min_AlignAdjust = mAA.GetDouble(min_AlignAdjust);
+    kP_Distance = kP_D.GetDouble(kP_Distance);
     double steeringAdjust = 0.0;
     double distanceAdjust = 0.0;
 

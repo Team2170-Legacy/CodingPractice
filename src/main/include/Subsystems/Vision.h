@@ -46,8 +46,12 @@ private:
 	nt::NetworkTableEntry setPipe;
 	nt::NetworkTableEntry snapshot;
 
+	nt::NetworkTableEntry mAA;
+	nt::NetworkTableEntry kP_O;
+	nt::NetworkTableEntry kP_D;
+
 	// Gains for closed-loop velocity control FOR VISION 
-	double min_AlignAdjust = 0.0;
+	double min_AlignAdjust = 0;
 	double kP_Omega = 0.05;
 	double kP_Distance = 0.0;
 	

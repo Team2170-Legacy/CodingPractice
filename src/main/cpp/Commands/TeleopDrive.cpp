@@ -42,52 +42,49 @@ void TeleopDrive::Initialize() {
  */
 void TeleopDrive::Execute()
 {
-    auto inst = nt::NetworkTableInstance::GetDefault();
-    auto table = inst.GetTable("VisionTable");
-    table->GetEntry("automove").SetBoolean(false);
+        double xAxis = Robot::oi->getDriverJoystick()->GetRawAxis(4);
+        double yAxis = Robot::oi->getDriverJoystick()->GetRawAxis(1);
 
-    double xAxis = Robot::oi->getDriverJoystick()->GetRawAxis(4);
-    double yAxis = Robot::oi->getDriverJoystick()->GetRawAxis(1);
+        double speedPos = Robot::oi->getDriverJoystick()->GetRawAxis(3);
+        double speedNeg = Robot::oi->getDriverJoystick()->GetRawAxis(2);
 
-    double speedPos = Robot::oi->getDriverJoystick()->GetRawAxis(3);
-    double speedNeg = Robot::oi->getDriverJoystick()->GetRawAxis(2);
+        double speedVoltage = 0.0;
+        double speedVelocity = 0.0;
 
-    double speedVoltage = 0.0;
-    double speedVelocity = 0.0;
+        switch (driveMode)
+        {
 
-    switch (driveMode)
-    {
+        case DriveMode::arcadeDriveVelocity:
+            if(speedNeg > 0.05){
+                speedVelocity = -speedNeg;
+            } else if(speedPos > 0.05){
+                speedVelocity = speedPos;
+            } else {
+                speedVelocity = 0.0;
+            }
 
-    case DriveMode::arcadeDriveVelocity:
-        if(speedNeg > 0.05){
-            speedVelocity = -speedNeg;
-        } else if(speedPos > 0.05){
-            speedVelocity = speedPos;
-        } else {
-            speedVelocity = 0.0;
+            //Robot::driveTrain->VelocityArcade(speedVelocity, -xAxis);
+            Robot::driveTrain->VelocityArcade(-yAxis, -speedVelocity);
+            break;
+        case DriveMode::arcadeDriveVoltage:
+            if(speedNeg > 0.05){
+                speedVoltage = -speedNeg;
+            } else if(speedPos > 0.05){
+                speedVoltage = speedPos;
+            } else {
+                speedVoltage = 0.0;
+            }
+
+            std::cout << speedVoltage << std::endl;
+            std::cout << xAxis << std::endl;
+
+            //Robot::driveTrain->ArcadeDrive(speedVoltage, -xAxis);
+            Robot::driveTrain->VelocityArcade(-yAxis, -speedVoltage);
+            break;
+        default:
+            break;
         }
-
-        //Robot::driveTrain->VelocityArcade(speedVelocity, -xAxis);
-        Robot::driveTrain->VelocityArcade(-yAxis, -speedVelocity);
-        break;
-    case DriveMode::arcadeDriveVoltage:
-        if(speedNeg > 0.05){
-            speedVoltage = -speedNeg;
-        } else if(speedPos > 0.05){
-            speedVoltage = speedPos;
-        } else {
-            speedVoltage = 0.0;
-        }
-
-        std::cout << speedVoltage << std::endl;
-        std::cout << xAxis << std::endl;
-
-        //Robot::driveTrain->ArcadeDrive(speedVoltage, -xAxis);
-        Robot::driveTrain->VelocityArcade(-yAxis, -speedVoltage);
-        break;
-    default:
-        break;
-    }
+    
 }
 
 /**

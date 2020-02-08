@@ -12,7 +12,7 @@ std::string DataLogger::GetTimestamp() {
   	time (&rawtime);
   	timeinfo = localtime(&rawtime);
 
-  	strftime(buffer,sizeof(buffer),"%F_%H:%M",timeinfo);
+  	strftime(buffer,sizeof(buffer),"%F_%H_%M",timeinfo);
   	std::string timeString(buffer);
 	return timeString;
 }
@@ -38,7 +38,7 @@ void DataLogger::StartSession() {
 
 void DataLogger::EndSession() {
 	if (tLog.is_open()) {
-		Flush();
+		//Flush();
 		tLog.close();
 	}
 	LogTimer.Stop();

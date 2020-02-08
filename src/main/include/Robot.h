@@ -30,7 +30,6 @@
 #include "OI.h"
 #include "DataLogger.h"
 
-
 class Robot : public frc::TimedRobot {
 public:
 	frc::Command* autonomousCommand = nullptr;

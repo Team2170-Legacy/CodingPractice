@@ -64,8 +64,7 @@ void Robot::RobotInit() {
 	frc::SmartDashboard::PutData("Auto Modes", &chooser);
 
 	visionLogger = new DataLogger();
-	visionLogger->VisionLogger("/home/lvuser/VisionLogs/Vision_Log_" + DataLogger::GetTimestamp() + ".csv");
-	visionLogger->StartSession();
+	visionLogger->VisionLogger("/home/lvuser/VisionLogs/Vision_Log" + DataLogger::GetTimestamp() + ".csv");
 }
 
 /**
@@ -99,6 +98,8 @@ void Robot::TeleopInit() {
 		autonomousCommand->Cancel();
 
 	
+	
+	visionLogger->StartSession();
 }
 
 void Robot::TeleopPeriodic() {

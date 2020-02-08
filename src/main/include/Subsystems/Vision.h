@@ -46,22 +46,24 @@ private:
 	nt::NetworkTableEntry camMode;
 	nt::NetworkTableEntry setPipe;
 	nt::NetworkTableEntry snapshot;
-
-	nt::NetworkTableEntry min_Omega_Entry;
-	nt::NetworkTableEntry kP_Omega_Entry;
-	nt::NetworkTableEntry kP_Distance_Entry;
-
-	// Gains for closed-loop velocity control FOR VISION 
-	double min_Omega = 0;
-	double kP_Omega = -0.05;
-	double kP_Distance = 0.0;
 	
 	const double powerportVisionTargetHeight= (6 + 9.25/12) + (1 + 5.0/12)/2; // height of the center of the vision target (ft)
 	const double cameraHeight = 21.0/12; // height that the camera is mounted at (ft)
 	const double cameraAngle = 35; // angle camera is mounted at from horizontal (degrees)
-	const double cameraDistanceFromFrontBumper = 15.0/12; 
+	const double cameraDistanceFromFrontBumper = 15.0/12; // ft
 
 public:
+	nt::NetworkTableEntry kP_Omega_Entry;
+	nt::NetworkTableEntry kI_Omega_Entry;
+	nt::NetworkTableEntry kP_Distance_Entry;
+
+	// For VisionDrive PID controller
+	double angleErrorDeadband = 2;	// deg
+	double kP_Omega = -0.015; 
+	double kI_Omega = 0;
+	double omegaLimiter = 0.5;
+	double kP_Distance = 0.0;
+
 	double optimalShootingDistance = 10; // optimal distance from powerport to shoot from (ft)
     enum Pipeline {powerport = 0};
 	enum LEDMode {currentPipelineMode = 0, forceOff = 1, forceBlink = 2, forceOn = 3};

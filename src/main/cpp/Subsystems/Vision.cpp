@@ -33,10 +33,10 @@ Vision::Vision() : frc::Subsystem("Vision") {
     visionDrive = table->GetEntry("Vision Drive");
     visionDrive.SetBoolean(false);
 
-    min_Omega_Entry = table->GetEntry("Vision Min Omega");
     kP_Omega_Entry = table->GetEntry("Vision kP Omega");
+    kI_Omega_Entry = table->GetEntry("Vision kI Omega");
     kP_Distance_Entry = table->GetEntry("Vision kP Distance");
-    min_Omega_Entry.SetDouble(min_Omega);
+    kI_Omega_Entry.SetDouble(kI_Omega);
     kP_Omega_Entry.SetDouble(kP_Omega);
     kP_Distance_Entry.SetDouble(kP_Distance);
 }
@@ -147,44 +147,6 @@ void Vision::SetPipeline(Pipeline pipeline) {
      snapshot.SetDouble(1);
  }
 
-/**
- * @brief Calculates angle and speed to rotate the robot based on vision data
- * 
- * Uses 2 P controllers. One is for angle error, another is for distance error.
- * 
- * @param distanceError the distanc error in feet, desired position - current position
- * @param angleError the angle error in degrees, desired angle - current angle
- * 
- * @return a tuple of <velocity, omega>
- */
-std::tuple<double, double> Vision::VisionSteerController(double distanceError, double angleError) {
-   
-   /*
-	kP_Omega  = frc::Preferences::GetInstance()->GetDouble("Vision kP Omega", kP_Omega);
-    min_AlignAdjust = frc::Preferences::GetInstance()->GetDouble("Vision Min Align Adjust", min_AlignAdjust);
-    kP_Distance = frc::Preferences::GetInstance()->GetDouble("Vision kP Distance", kP_Distance);
- */
-    kP_Omega = kP_Omega_Entry.GetDouble(kP_Omega);
-    min_Omega = min_Omega_Entry.GetDouble(min_Omega);
-    kP_Distance = kP_Distance_Entry.GetDouble(kP_Distance);
-    double steeringAdjust = 0.0;
-    double distanceAdjust = 0.0;
 
-    // if robot not aligned with target run alignment p Controller
-    if (angleError > 0)
-    {
-        steeringAdjust = kP_Omega * angleError + min_Omega;
-    }   
-    else if (angleError < 0)
-    {
-        steeringAdjust = kP_Omega * angleError - min_Omega;
-    }
-
-   
-    distanceAdjust = kP_Distance * distanceError;
-
-    return std::make_tuple(distanceAdjust, steeringAdjust);
-    
-}
 
 

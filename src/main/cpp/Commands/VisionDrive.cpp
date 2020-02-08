@@ -29,6 +29,7 @@ VisionDrive::VisionDrive(): frc::Command() {
  */
 void VisionDrive::Initialize() {
     Robot::vision->visionDrive.SetBoolean(false);
+    omegaIntegrator = 0;
 }
 
 /**
@@ -49,19 +50,48 @@ void VisionDrive::Execute() {
         double distanceError =  Robot::vision->optimalShootingDistance - distanceFromTarget;
 
         // get angle error
-        double xAngleError = Robot::vision->GetXAngleToTarget();
-       
-        std::tuple velocityTuple = Robot::vision->VisionSteerController(distanceError, xAngleError);
-        double speed = 0;
-        double omega = 0;
-        std::tie(speed, omega) = velocityTuple; 
+        double angleError = Robot::vision->GetXAngleToTarget();
+        
+        // deadband angle error
+        if (angleError < Robot::vision->angleErrorDeadband && angleError > -Robot::vision->angleErrorDeadband) {
+            angleError = 0;
+        }
+        else if(angleError > Robot::vision->angleErrorDeadband) {
+            angleError -= Robot::vision->angleErrorDeadband;
+        }
+        else {
+            angleError += Robot::vision->angleErrorDeadband;
+        }
+
+
+        Robot::vision->kP_Omega = Robot::vision->kP_Omega_Entry.GetDouble(Robot::vision->kP_Omega);
+        Robot::vision->kI_Omega = Robot::vision->kI_Omega_Entry.GetDouble(Robot::vision->kI_Omega);
+        Robot::vision->kP_Distance = Robot::vision->kP_Distance_Entry.GetDouble(Robot::vision->kP_Distance);
+        double omega = 0.0;
+        double speed = 0.0;
+
+        omegaIntegrator += angleError * deltaTime;
+        omega = Robot::vision->kP_Omega * angleError;
+        omega += omegaIntegrator * Robot::vision->kI_Omega;
+ 
+        if (omega > Robot::vision->omegaLimiter)
+        {
+            omega = Robot::vision->omegaLimiter;
+        }
+        else if (omega < -Robot::vision->omegaLimiter)
+        {
+            omega = -Robot::vision->omegaLimiter;
+        }
+        
+        speed = Robot::vision->kP_Distance * distanceError;
         Robot::driveTrain->VelocityArcade(speed, omega);
+
 
         Robot::targetLocked = true;
         Robot::visionDriveActive = true;
         Robot::distance = distanceFromTarget;
         Robot::distanceError = distanceError;
-        Robot::angleError = xAngleError;
+        Robot::angleError = angleError;
         Robot::visionSpeed = speed;
         Robot::visionOmega = omega;
     }
@@ -95,6 +125,7 @@ bool VisionDrive::IsFinished() {
 void VisionDrive::End() {
      Robot::vision->visionDrive.SetBoolean(false);
      Robot::visionDriveActive = false;
+     omegaIntegrator = 0;
 }
 
 /**

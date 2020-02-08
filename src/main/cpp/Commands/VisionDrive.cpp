@@ -28,7 +28,7 @@ VisionDrive::VisionDrive(): frc::Command() {
  * @brief Called just before this Command runs the first time
  */
 void VisionDrive::Initialize() {
-    Robot::vision->automove.SetBoolean(false);
+    Robot::vision->visionDrive.SetBoolean(false);
 }
 
 /**
@@ -40,7 +40,7 @@ void VisionDrive::Execute() {
     if (Robot::vision->TargetIsLocked())
     {
         // Publish automove flag to true while this code is running
-        Robot::vision->automove.SetBoolean(true);
+        Robot::vision->visionDrive.SetBoolean(true);
 
         // calulate distance error
         Robot::vision->optimalShootingDistance = frc::Preferences::GetInstance()->GetDouble("Optimal Shooting Distance", Robot::vision->optimalShootingDistance);
@@ -51,7 +51,31 @@ void VisionDrive::Execute() {
         // get angle error
         double xAngleError = Robot::vision->GetXAngleToTarget();
        
-        Robot::vision->VisionSteerController(xAngleError, distanceError, Robot::driveTrain->pidControllerL, Robot::driveTrain->pidControllerR);
+        std::tuple velocityTuple = Robot::vision->VisionSteerController(distanceError, xAngleError);
+        double speed = 0;
+        double omega = 0;
+        std::tie(speed, omega) = velocityTuple; 
+        Robot::driveTrain->VelocityArcade(speed, omega);
+
+        Robot::targetLocked = true;
+        Robot::visionDriveActive = true;
+        Robot::distance = distanceFromTarget;
+        Robot::distanceError = distanceError;
+        Robot::angleError = xAngleError;
+        Robot::visionSpeed = speed;
+        Robot::visionOmega = omega;
+    }
+    else
+    {
+        Robot::vision->visionDrive.SetBoolean(false);
+        Robot::targetLocked = false;
+        Robot::visionDriveActive = false;
+        Robot::distance = 0;
+        Robot::distanceError = 0;
+        Robot::angleError = 0;
+        Robot::visionSpeed = 0;
+        Robot::visionOmega = 0;
+        Robot::vision->TakeSnapshot();
     }
 }
 
@@ -69,14 +93,15 @@ bool VisionDrive::IsFinished() {
  * @brief Called once after isFinished returns true
  */
 void VisionDrive::End() {
-     Robot::vision->automove.SetBoolean(false);
+     Robot::vision->visionDrive.SetBoolean(false);
+     Robot::visionDriveActive = false;
 }
 
 /**
  * Called when another command which requires one or more of the same subsystems is scheduled to run
  */
 void VisionDrive::Interrupted() {
-    Robot::vision->automove.SetBoolean(false);
+    End();
 }
 
 

@@ -18,6 +18,8 @@
 #include "networktables/NetworkTable.h"
 #include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableInstance.h"
+#include <tuple>
+#include "DataLogger.h"
 
 /**
  *

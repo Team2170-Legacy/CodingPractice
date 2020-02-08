@@ -30,15 +30,15 @@ Vision::Vision() : frc::Subsystem("Vision") {
 	snapshot = table->GetEntry("snapshot");
     distance = table->GetEntry("distance");
     distance.SetDouble(0);
-    automove = table->GetEntry("automove");
-    automove.SetBoolean(false);
+    visionDrive = table->GetEntry("Vision Drive");
+    visionDrive.SetBoolean(false);
 
-    mAA = table->GetEntry("Vision Min Align Adjust");
-    kP_O = table->GetEntry("Vision kP Omega");
-    kP_D = table->GetEntry("Vision kP Distance");
-    mAA.SetDouble(min_AlignAdjust);
-    kP_O.SetDouble(kP_Omega);
-    kP_D.SetDouble(kP_Distance);
+    min_Omega_Entry = table->GetEntry("Vision Min Omega");
+    kP_Omega_Entry = table->GetEntry("Vision kP Omega");
+    kP_Distance_Entry = table->GetEntry("Vision kP Distance");
+    min_Omega_Entry.SetDouble(min_Omega);
+    kP_Omega_Entry.SetDouble(kP_Omega);
+    kP_Distance_Entry.SetDouble(kP_Distance);
 }
 
 void Vision::InitDefaultCommand() {
@@ -140,47 +140,51 @@ void Vision::SetPipeline(Pipeline pipeline) {
 }
 
 /**
- * @brief Steers the robot to minimize the distance and angle error
+ * @brief Saves a snapshot to the limelight.
  * 
- * Runs 2 P controllers. First runs a p controller on the angleError, then once the robot is close to
- * aligned this starts running a p controller for distance error as well. 
- * 
- * @param angleError the angle error in degrees, desired angle - current angle
- * @param distanceError the distanc error in feet, desired position - current position
  */
-void Vision::VisionSteerController(double angleError, double distanceError, std::shared_ptr<rev::CANPIDController> pidControllerL, std::shared_ptr<rev::CANPIDController> pidControllerR) {
+ void Vision::TakeSnapshot() {
+     snapshot.SetDouble(1);
+ }
+
+/**
+ * @brief Calculates angle and speed to rotate the robot based on vision data
+ * 
+ * Uses 2 P controllers. One is for angle error, another is for distance error.
+ * 
+ * @param distanceError the distanc error in feet, desired position - current position
+ * @param angleError the angle error in degrees, desired angle - current angle
+ * 
+ * @return a tuple of <velocity, omega>
+ */
+std::tuple<double, double> Vision::VisionSteerController(double distanceError, double angleError) {
    
    /*
 	kP_Omega  = frc::Preferences::GetInstance()->GetDouble("Vision kP Omega", kP_Omega);
     min_AlignAdjust = frc::Preferences::GetInstance()->GetDouble("Vision Min Align Adjust", min_AlignAdjust);
     kP_Distance = frc::Preferences::GetInstance()->GetDouble("Vision kP Distance", kP_Distance);
  */
-    kP_Omega = kP_O.GetDouble(kP_Omega);
-    min_AlignAdjust = mAA.GetDouble(min_AlignAdjust);
-    kP_Distance = kP_D.GetDouble(kP_Distance);
+    kP_Omega = kP_Omega_Entry.GetDouble(kP_Omega);
+    min_Omega = min_Omega_Entry.GetDouble(min_Omega);
+    kP_Distance = kP_Distance_Entry.GetDouble(kP_Distance);
     double steeringAdjust = 0.0;
     double distanceAdjust = 0.0;
 
     // if robot not aligned with target run alignment p Controller
     if (angleError > 0)
     {
-        steeringAdjust = kP_Omega * angleError + min_AlignAdjust;
+        steeringAdjust = kP_Omega * angleError + min_Omega;
     }   
     else if (angleError < 0)
     {
-        steeringAdjust = kP_Omega * angleError - min_AlignAdjust;
+        steeringAdjust = kP_Omega * angleError - min_Omega;
     }
 
-    // if robot close to aligned run distance p controller
-    if (abs(angleError) < 5)
-    {
-        distanceAdjust = kP_Distance * distanceError;
-    }  
+   
+    distanceAdjust = kP_Distance * distanceError;
 
-    pidControllerL->SetReference(steeringAdjust + distanceAdjust, rev::ControlType::kVelocity);  
-    pidControllerR->SetReference(steeringAdjust - distanceAdjust, rev::ControlType::kVelocity);
+    return std::make_tuple(distanceAdjust, steeringAdjust);
     
-
 }
 
 

@@ -59,8 +59,8 @@ public:
 
 	// For VisionDrive PID controller
 	double angleErrorDeadband = 2;	// deg
-	double kP_Omega = -0.015; 
-	double kI_Omega = 0;
+	double kP_Omega = -0.025; 
+	double kI_Omega = -0.02;
 	double omegaLimiter = 0.5;
 	double kP_Distance = 0.0;
 
